@@ -1,5 +1,5 @@
 const App = () => {
-  return <></>;
+  return <><Router></Router></>;
 };
 
 export default App;
