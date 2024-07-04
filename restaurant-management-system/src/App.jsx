@@ -1,5 +1,8 @@
+import Navbar from "./components/navbar";
 const App = () => {
-  return <><Router></Router></>;
+  return <>
+  <Navbar/>
+</>;
 };
 
 export default App;
