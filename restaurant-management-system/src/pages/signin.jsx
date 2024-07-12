@@ -16,11 +16,15 @@ const Signin = () => {
     email: yup.string().required("Please Enter your Email").email(),
     password: yup.string().required("Please Enter your Password"),
   });
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log("values", values);
-    signin(values.email, values.password);
-    if (signin) {
-      navigate("/");
+    try {
+      const response = await signin(values.email, values.password);
+      if (response.status == 200) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Sign-in error:", error);
     }
   };
   return (
