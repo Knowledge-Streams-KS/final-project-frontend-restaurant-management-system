@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from "react";
-import axiosInstance from "../axios/axios";
-import RecipeTable from "../components/recipes";
-import RecipeFrom from "../components/addRecipe";
+import ReadRecipe from "../components/Recipe/readRecipe";
 
-const Recipes = () => {
-  const [recipes, setRecipes] = useState([]);
-
-  const fetchRecipes = async () => {
-    try {
-      const response = await axiosInstance.get("/recipes");
-      setRecipes(response.data.allRecipe);
-    } catch (error) {
-      console.error("Error fetching Recipes:", error);
-    }
-  };
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
-
+const RecipePage = () => {
   return (
-    <div className="Recipes">
-      <RecipeFrom refreshRecipe={fetchRecipes} />
-      <RecipeTable allRecipes={recipes} />
-    </div>
+    <>
+      <ReadRecipe />
+    </>
   );
 };
 
-export default Recipes;
+export default RecipePage;

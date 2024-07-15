@@ -11,8 +11,6 @@ const HomePage = () => {
       <OTPForm></OTPForm>
       <Order />
       <Employee />
-     
-      <Recipes />
     </>
   );
 };
