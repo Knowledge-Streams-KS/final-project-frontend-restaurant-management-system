@@ -5,6 +5,7 @@ import HomePage from "../pages/home";
 import IngedientsCodePage from "../pages/ingredientsCode";
 import InventoryPage from "../pages/inventory";
 import OrderTablePage from "../pages/orderTable";
+import RecipePage from "../pages/recipes";
 
 const Router = () => {
   return (
@@ -16,6 +17,7 @@ const Router = () => {
         <Route path="/ordertable" element={<OrderTablePage />} />
         <Route path="/ingredients/code" element={<IngedientsCodePage />} />
         <Route path="/inventory" element={<InventoryPage />} />
+        <Route path="/recipe" element={<RecipePage />} />
       </Routes>
     </>
   );

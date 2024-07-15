@@ -1,10 +1,10 @@
 import { Fragment, useState, useEffect } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
-import axiosInstance from "../axios/axios";
 import toast from "react-hot-toast";
+import axiosInstance from "../../axios/axios";
 
-const RecipeFrom = ({ refreshRecipe }) => {
+const AddRecipe = ({ fetchRecipes }) => {
   const [ingredientCodes, setIngredientCodes] = useState([]);
 
   useEffect(() => {
@@ -59,8 +59,8 @@ const RecipeFrom = ({ refreshRecipe }) => {
       const successMessage =
         response.data.message || "Recipe added successfully.";
       toast.success(successMessage);
+      fetchRecipes();
       resetForm();
-      refreshRecipe();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add Recipe";
@@ -72,7 +72,9 @@ const RecipeFrom = ({ refreshRecipe }) => {
     <Fragment>
       <div className="container mx-auto px-4 py-8">
         <div className="mx-auto text-center">
-          <h1 className="mb-8 text-4xl font-bold text-gray-900">Add Recipe</h1>
+          <h1 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+            Add Recipe
+          </h1>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -224,4 +226,4 @@ const RecipeFrom = ({ refreshRecipe }) => {
   );
 };
 
-export default RecipeFrom;
+export default AddRecipe;
