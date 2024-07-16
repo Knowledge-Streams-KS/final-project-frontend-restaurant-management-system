@@ -1,11 +1,15 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { AuthContext } from "../context/authContext";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 const Signup = () => {
   const { signup } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const defaultValue = {
     fname: "",
     lname: "",
@@ -14,6 +18,7 @@ const Signup = () => {
     role: "",
     checkbox: false,
   };
+
   const validationSchema = yup.object().shape({
     fname: yup.string().required("Please Enter your First Name"),
     lname: yup.string().required("Please Enter your Last Name"),
@@ -33,16 +38,28 @@ const Signup = () => {
     role: yup.string().required("Role is required"),
     checkbox: yup.boolean().oneOf([true], "Please accept terms & conditions"),
   });
-  const handleSubmit = (values) => {
-    console.log("values", values.fname, values.lname);
-    signup(
-      values.fname,
-      values.lname,
-      values.email,
-      values.password,
-      values.role,
-    );
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      const response = await signup(
+        values.fname,
+        values.lname,
+        values.email,
+        values.password,
+        values.role,
+      );
+      if (response.status === 201) {
+        navigate("/emailverification", {
+          state: { email: values.email, password: values.password },
+        });
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
     <Fragment>
       <div className="container mx-auto px-4 py-8">
@@ -134,7 +151,7 @@ const Signup = () => {
                   <span className="text-sm text-gray-700">
                     I agree to the
                     <a
-                      className="text-pink-500 transition-colors hover:text-pink-700"
+                      className="text-green-500 transition-colors hover:text-green-700"
                       href="#"
                     >
                       &nbsp;Terms and Conditions
@@ -147,17 +164,22 @@ const Signup = () => {
               </div>
 
               <button
-                className="w-full rounded-lg bg-pink-500 py-3 font-semibold text-white transition-colors hover:bg-pink-600"
+                className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
+                  loading
+                    ? "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
                 type="submit"
+                disabled={loading}
               >
-                Submit
+                {loading ? "Submitting..." : "Submit"}
               </button>
               <div className="mt-4 text-center">
                 <Link
-                  to="/signin"
+                  to="/Signin"
                   className="text-red-500 transition-colors hover:text-red-700"
                 >
-                  Already have a account? Sign in
+                  Already have an account? Sign in
                 </Link>
               </div>
             </Form>

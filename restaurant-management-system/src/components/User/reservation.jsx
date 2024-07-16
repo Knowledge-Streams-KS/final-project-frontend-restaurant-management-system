@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../axios/axios";
 
-const AddReservation = ({ fetchBookings }) => {
+const ReservationCustomer = ({ fetchBookings }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -31,7 +31,7 @@ const AddReservation = ({ fetchBookings }) => {
     email: "",
     phoneNo: "",
     date: currentDate,
-    reservedBy: "employee",
+    reservedBy: "customer",
     TimeSlotId: "",
   };
 
@@ -47,7 +47,7 @@ const AddReservation = ({ fetchBookings }) => {
       .matches(/^\d{11}$/, "Phone number must be exactly 11 digits")
       .required("Phone number is required"),
     date: yup.date().required("Date is required"),
-    reservedBy: yup.string(),
+
     TimeSlotId: yup.string().required("Time Slot is required"),
   });
 
@@ -89,10 +89,10 @@ const AddReservation = ({ fetchBookings }) => {
   return (
     <Fragment>
       <div className="container mx-auto px-4 py-8">
-        <div className="mx-auto text-center">
-          <h1 className="mb-8 text-4xl font-bold text-gray-900">
-            Add Reservation
-          </h1>
+        <h1 className="mb-8 text-center text-4xl font-bold text-yellow-500">
+          Add Reservation
+        </h1>
+        <div className="mx-auto mt-8 max-w-md px-6 py-8 text-center">
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -100,7 +100,7 @@ const AddReservation = ({ fetchBookings }) => {
           >
             {({ values, setFieldValue }) => (
               <Form className="rounded-lg bg-white px-8 py-8 pt-8 shadow-md">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="">
                   <div className="mb-4">
                     <Field
                       type="text"
@@ -198,4 +198,4 @@ const AddReservation = ({ fetchBookings }) => {
   );
 };
 
-export default AddReservation;
+export default ReservationCustomer;

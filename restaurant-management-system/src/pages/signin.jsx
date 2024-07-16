@@ -1,10 +1,11 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { AuthContext } from "../context/authContext";
 import { useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 const Signin = () => {
+  const [loading, setLoading] = useState(false);
   const { signin } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -18,13 +19,16 @@ const Signin = () => {
   });
   const handleSubmit = async (values) => {
     console.log("values", values);
+    setLoading(true);
     try {
       const response = await signin(values.email, values.password);
       if (response.status == 200) {
-        navigate("/");
+        navigate("/home");
       }
     } catch (error) {
       console.error("Sign-in error:", error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -43,7 +47,7 @@ const Signin = () => {
                   type="email"
                   name="email"
                   placeholder="Enter your email"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="email" />
@@ -54,18 +58,24 @@ const Signin = () => {
                   type="password"
                   name="password"
                   placeholder="Enter your password"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="password" />
                 </p>
               </div>
               <button
-                className="w-full rounded-lg bg-pink-500 py-3 font-semibold text-white transition-colors hover:bg-pink-600"
+                className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
+                  loading
+                    ? "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
                 type="submit"
+                disabled={loading}
               >
-                Log In
+                {loading ? "Logging..." : "Login"}
               </button>
+
               <div className="mt-4 text-center">
                 <Link
                   to="/signup"

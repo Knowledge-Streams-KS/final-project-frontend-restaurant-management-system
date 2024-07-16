@@ -10,6 +10,10 @@ import OrderPage from "../pages/orders";
 import BillPage from "../components/order/bill";
 import ReservationPage from "../pages/reservation";
 import EmployeePage from "../pages/employees";
+import EmailVerificationPage from "../pages/resendVerification";
+import LayoutTemplate from "../components/layout/Admin";
+import AllStock from "../pages/stock";
+import Dashboard from "../pages/dashboard";
 
 const Router = () => {
   return (
@@ -17,15 +21,81 @@ const Router = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
+        <Route path="/emailverification" element={<EmailVerificationPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/ordertable" element={<OrderTablePage />} />
-        <Route path="/ingredients/code" element={<IngedientsCodePage />} />
-        <Route path="/inventory" element={<InventoryPage />} />
-        <Route path="/recipe" element={<RecipePage />} />
-        <Route path="/reservation" element={<ReservationPage />} />
-        <Route path="/order" element={<OrderPage />} />
+        <Route
+          path="/home"
+          element={
+            <LayoutTemplate>
+              <Dashboard />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/ordertable"
+          element={
+            <LayoutTemplate>
+              <OrderTablePage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/allstock"
+          element={
+            <LayoutTemplate>
+              <AllStock />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/ingredients/code"
+          element={
+            <LayoutTemplate>
+              <IngedientsCodePage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/inventory"
+          element={
+            <LayoutTemplate>
+              <InventoryPage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/recipe"
+          element={
+            <LayoutTemplate>
+              <RecipePage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/reservation"
+          element={
+            <LayoutTemplate>
+              <ReservationPage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/order"
+          element={
+            <LayoutTemplate>
+              <OrderPage />
+            </LayoutTemplate>
+          }
+        />
         <Route path="/order/bill/:orderId" element={<BillPage />} />
-        <Route path="/employee" element={<EmployeePage />} />
+        <Route
+          path="/employee"
+          element={
+            <LayoutTemplate>
+              <EmployeePage />
+            </LayoutTemplate>
+          }
+        />
       </Routes>
     </>
   );

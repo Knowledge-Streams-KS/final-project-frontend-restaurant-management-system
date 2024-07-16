@@ -32,7 +32,6 @@ const ReadOrder = () => {
 
   const handleEdit = (orderId) => {
     setEditOrderId(orderId);
-   
   };
   const handleOrder = (orderId, status) => {
     if (status === "billed") {
@@ -158,7 +157,7 @@ const ReadOrder = () => {
                               className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
                               onClick={() => handleEdit(order.id)}
                             >
-                              Add Items
+                              Add
                             </button>
                             <DeleteOrder
                               orderId={order.id}

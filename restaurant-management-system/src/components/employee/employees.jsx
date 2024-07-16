@@ -75,22 +75,22 @@ const EmployeeTable = () => {
               </thead>
               <tbody>
                 {filteredEmployees.map((employee) => (
-                  <tr key={employee.id}>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                  <tr className="border-b border-gray-200" key={employee.id}>
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       {employee.id}
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       {employee.firstName} {employee.lastName}
                     </td>
 
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       {employee.email}
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       {employee.role}
                     </td>
 
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       <span
                         className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
                           employee.verified
@@ -107,10 +107,10 @@ const EmployeeTable = () => {
                         </span>
                       </span>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       {employee.salary}
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       <span
                         className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
                           employee.allowAcess
@@ -153,7 +153,6 @@ const EmployeeTable = () => {
                         </>
                       )}
                     </td>
-                    <td className="flex justify-center px-5 py-5 text-center text-sm"></td>
                   </tr>
                 ))}
               </tbody>
