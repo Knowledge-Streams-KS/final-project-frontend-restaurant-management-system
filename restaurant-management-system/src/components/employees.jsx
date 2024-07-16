@@ -41,6 +41,12 @@ const EmployeeTable = ({ employees }) => {
                   <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-700">
                     Verified
                   </th>
+                  <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-700">
+                    Access
+                  </th>
+                  <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-700">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -74,6 +80,23 @@ const EmployeeTable = ({ employees }) => {
                         ></span>
                         <span className="relative">
                           {employee.verified ? "Yes" : "No"}
+                        </span>
+                      </span>
+                    </td>
+                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                      <span
+                        className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
+                          employee.allowAcess
+                            ? "bg-green-200 text-green-900"
+                            : "bg-red-200 text-red-900"
+                        }`}
+                      >
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 rounded-full opacity-50"
+                        ></span>
+                        <span className="relative">
+                          {employee.allowAcess ? "Yes" : "No"}
                         </span>
                       </span>
                     </td>

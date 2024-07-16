@@ -67,7 +67,7 @@ const AddOrder = (fetchOrders) => {
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const orderData = {
-        userId: 3, // Assuming user ID is provided by the context or props
+        userId: 3,
         customerId: values.customerId,
         orderItems: values.orderItems.map((item) => ({
           recipeId: item.recipeId,
@@ -138,7 +138,7 @@ const AddOrder = (fetchOrders) => {
                 </div>
                 <FieldArray name="orderItems">
                   {({ remove, push }) => (
-                    <div>
+                    <div className="mb-2">
                       {values.orderItems.map((item, index) => (
                         <div
                           key={index}

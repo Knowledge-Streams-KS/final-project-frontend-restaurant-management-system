@@ -1,12 +1,12 @@
 import { Fragment, useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
-import axiosInstance from "../axios/axios";
 import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axiosInstance from "../../axios/axios";
 
-const ReservationForm = ({ refreshReservation }) => {
+const AddReservation = ({ fetchBookings }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -58,8 +58,8 @@ const ReservationForm = ({ refreshReservation }) => {
       const successMessage =
         response.data.message || "Reservation added successfully.";
       toast.success(successMessage);
+      fetchBookings();
       resetForm();
-      refreshReservation();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add Reservation";
@@ -72,21 +72,17 @@ const ReservationForm = ({ refreshReservation }) => {
     const currentDate = new Date(today.toDateString());
     const futureDate = new Date();
     futureDate.setDate(currentDate.getDate() + 6);
-
     const selectedDate = new Date(date.toDateString());
-
     return selectedDate >= currentDate && selectedDate <= futureDate;
   };
 
   const filterTimeSlots = (date, timeSlots) => {
     const today = new Date();
     const selectedDate = new Date(date);
-
     if (selectedDate.toDateString() === today.toDateString()) {
       const currentTime = today.getHours() + ":" + today.getMinutes();
       return timeSlots.filter((slot) => slot.startTime >= currentTime);
     }
-
     return timeSlots;
   };
 
@@ -213,4 +209,4 @@ const ReservationForm = ({ refreshReservation }) => {
   );
 };
 
-export default ReservationForm;
+export default AddReservation;

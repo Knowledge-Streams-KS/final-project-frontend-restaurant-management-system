@@ -106,7 +106,7 @@ const AddItemOrder = ({ fetchOrders, orderId, onEdit }) => {
               <h2 className="mb-2 text-lg font-semibold">Add Order Item</h2>
               <FieldArray name="orderItems">
                 {({ remove, push }) => (
-                  <div>
+                  <div className="mb-2">
                     {values.orderItems.map((item, index) => (
                       <div
                         key={index}
