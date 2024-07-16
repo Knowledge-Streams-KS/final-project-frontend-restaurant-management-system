@@ -1,10 +1,10 @@
 import { Fragment, useState, useEffect } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
-import axiosInstance from "../axios/axios";
 import toast from "react-hot-toast";
+import axiosInstance from "../../axios/axios";
 
-const OrderForm = ({ refreshOrders }) => {
+const AddOrder = (fetchOrders) => {
   const [reservations, setReservations] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [selectedType, setSelectedType] = useState("");
@@ -15,7 +15,10 @@ const OrderForm = ({ refreshOrders }) => {
     const fetchReservations = async () => {
       try {
         const response = await axiosInstance.get("/reservations");
-        setReservations(response.data || []);
+        const checkedInReservations = response.data.filter(
+          (reservation) => reservation.status === "checked-in",
+        );
+        setReservations(checkedInReservations || []);
       } catch (error) {
         console.error("Error fetching reservations:", error);
       }
@@ -40,7 +43,7 @@ const OrderForm = ({ refreshOrders }) => {
   }, [recipes]);
 
   const initialValues = {
-    userId: "", // Assuming user ID is provided by the context or props
+    userId: "",
     customerId: "",
     orderItems: [{ type: "", title: "", size: "", recipeId: "", quantity: 1 }],
   };
@@ -73,8 +76,8 @@ const OrderForm = ({ refreshOrders }) => {
       };
       const response = await axiosInstance.post("/order", orderData);
       toast.success(response.data.message || "Order added successfully.");
+      fetchOrders();
       resetForm();
-      refreshOrders();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add order.";
@@ -100,7 +103,9 @@ const OrderForm = ({ refreshOrders }) => {
     <Fragment>
       <div className="container mx-auto px-4 py-8">
         <div className="mx-auto text-center">
-          <h1 className="mb-8 text-4xl font-bold text-gray-900">Add Order</h1>
+          <h1 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+            Add Order
+          </h1>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -297,4 +302,4 @@ const OrderForm = ({ refreshOrders }) => {
   );
 };
 
-export default OrderForm;
+export default AddOrder;

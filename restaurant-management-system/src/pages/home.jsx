@@ -9,7 +9,6 @@ const HomePage = () => {
     <>
       <Booking />
       <OTPForm></OTPForm>
-      <Order />
       <Employee />
     </>
   );
