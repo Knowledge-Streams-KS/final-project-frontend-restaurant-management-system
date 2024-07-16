@@ -6,6 +6,8 @@ import IngedientsCodePage from "../pages/ingredientsCode";
 import InventoryPage from "../pages/inventory";
 import OrderTablePage from "../pages/orderTable";
 import RecipePage from "../pages/recipes";
+import OrderPage from "../pages/orders";
+import BillPage from "../components/order/bill";
 
 const Router = () => {
   return (
@@ -18,6 +20,8 @@ const Router = () => {
         <Route path="/ingredients/code" element={<IngedientsCodePage />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/recipe" element={<RecipePage />} />
+        <Route path="/order" element={<OrderPage />} />
+        <Route path="/order/bill/:orderId" element={<BillPage />} />
       </Routes>
     </>
   );
