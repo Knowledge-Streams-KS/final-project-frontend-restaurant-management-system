@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from "react";
-import axiosInstance from "../axios/axios";
-import EmployeeTable from "../components/employees";
+import EmployeeTable from "../components/employee/employees";
 
-const Employee = () => {
-  const [employees, setEmployees] = useState([]);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await axiosInstance.get("/users");
-
-        setEmployees(response.data.data);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
-
+const EmployeePage = () => {
   return (
-    <div className="Employee">
-      <EmployeeTable employees={employees} />
-    </div>
+    <>
+      <EmployeeTable />
+    </>
   );
 };
 
-export default Employee;
+export default EmployeePage;
