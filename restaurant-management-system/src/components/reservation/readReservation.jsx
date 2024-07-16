@@ -1,7 +1,21 @@
-import React, { useState } from "react";
-
-const BookingTable = ({ bookings }) => {
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../axios/axios";
+import AddReservation from "./addReservation";
+import DeleteReservation from "./deleteReservation";
+const ReadReservation = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [bookings, setBookings] = useState([]);
+  const fetchBookings = async () => {
+    try {
+      const response = await axiosInstance.get("/reservations");
+      setBookings(response.data);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  };
+  useEffect(() => {
+    fetchBookings();
+  }, []);
   const filteredBookings = bookings.filter((booking) =>
     `${booking.Customer.firstName} ${booking.Customer.lastName}`
       .toLowerCase()
@@ -10,6 +24,7 @@ const BookingTable = ({ bookings }) => {
 
   return (
     <div className="container mx-auto px-4 sm:px-8">
+      <AddReservation fetchBookings={fetchBookings} />
       <div className="py-8">
         <div>
           <h2 className="text-2xl font-semibold leading-tight">Bookings</h2>
@@ -50,13 +65,15 @@ const BookingTable = ({ bookings }) => {
                   <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                     Table No
                   </th>
-                  <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3"></th>
+                  <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking.id}>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                  <tr className="border-b border-gray-200" key={booking.id}>
+                    <td className="bg-white px-5 py-5 text-sm">
                       <div className="flex">
                         <div className="ml-3">
                           <p className="whitespace-no-wrap text-gray-900">
@@ -65,22 +82,22 @@ const BookingTable = ({ bookings }) => {
                         </div>
                       </div>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.Customer.phoneNo}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.Customer.email}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.date}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-center text-sm">
+                    <td className="bg-white px-5 py-5 text-center text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.TimeSlotId}
                       </p>
@@ -88,12 +105,12 @@ const BookingTable = ({ bookings }) => {
                         {booking.TimeSlot.startTime}-{booking.TimeSlot.endTime}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.reservedBy}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <span
                         className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
                           booking.status === "checked-out"
@@ -112,23 +129,16 @@ const BookingTable = ({ bookings }) => {
                         <span className="relative">{booking.status}</span>
                       </span>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">
+                    <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.tableId}
                       </p>
                     </td>
-                    <td className="border-b border-gray-200 bg-white px-5 py-5 text-right text-sm">
-                      <button
-                        type="button"
-                        className="inline-block text-gray-500 hover:text-gray-700"
-                      >
-                        <svg
-                          className="inline-block h-6 w-6 fill-current"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 6a2 2 0 110-4 2 2 0 010 4zm0 8a2 2 0 110-4 2 2 0 010 4zm-2 6a2 2 0 104 0 2 2 0 00-4 0z" />
-                        </svg>
-                      </button>
+                    <td className="flex justify-center px-5 py-5 text-center text-sm">
+                      <DeleteReservation
+                        bookingId={booking.id}
+                        fetchBookings={fetchBookings}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -141,4 +151,4 @@ const BookingTable = ({ bookings }) => {
   );
 };
 
-export default BookingTable;
+export default ReadReservation;
