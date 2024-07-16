@@ -9,6 +9,7 @@ import RecipePage from "../pages/recipes";
 import OrderPage from "../pages/orders";
 import BillPage from "../components/order/bill";
 import ReservationPage from "../pages/reservation";
+import EmployeePage from "../pages/employees";
 
 const Router = () => {
   return (
@@ -24,6 +25,7 @@ const Router = () => {
         <Route path="/reservation" element={<ReservationPage />} />
         <Route path="/order" element={<OrderPage />} />
         <Route path="/order/bill/:orderId" element={<BillPage />} />
+        <Route path="/employee" element={<EmployeePage />} />
       </Routes>
     </>
   );
