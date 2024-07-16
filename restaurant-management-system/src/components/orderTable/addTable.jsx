@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Formik, Form, Field, ErrorMessage, useFormik } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
@@ -88,7 +88,7 @@ const AddOrderTable = ({ fetchOrderTables }) => {
               </div>
               <button
                 type="submit"
-                className="mr-4 mt-4 w-full rounded-lg bg-green-500 px-4 py-3 text-white transition-colors hover:bg-green-600 md:mt-0 md:w-auto"
+                className="mr-4 mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
               >
                 Add Order Table
               </button>

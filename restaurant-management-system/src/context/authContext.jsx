@@ -34,9 +34,9 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
-      const { data, token, message } = response.data;
+      const { userInfo, token, message } = response.data;
       localStorage.setItem("token", token);
-      setUser(data);
+      setUser(userInfo);
       const successMessage = message || "Successfully logged in!";
       toast.success(successMessage);
       return response;

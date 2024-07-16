@@ -57,7 +57,7 @@ const AddSalary = ({ employeeId, fetchSalaries, onEdit }) => {
             component="p"
             className="mt-1 text-sm text-red-600"
           />
-          <div className="mt-3 flex">
+          <div className="mt-3">
             <button
               type="submit"
               className="mr-2 flex-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
