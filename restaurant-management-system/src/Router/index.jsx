@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Signup from "../pages/signup";
 import Signin from "../pages/signin";
 import HomePage from "../pages/home";
@@ -14,15 +14,19 @@ import EmailVerificationPage from "../pages/resendVerification";
 import LayoutTemplate from "../components/layout/Admin";
 import AllStock from "../pages/stock";
 import Dashboard from "../pages/dashboard";
+import PrivateRoute from "../context/protectedRoute";
+import EditUserForm from "../pages/editProfile";
+import OrderDetails from "../components/orderDetails/orderDetails";
 
 const Router = () => {
   return (
-    <>
-      <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/emailverification" element={<EmailVerificationPage />} />
-        <Route path="/" element={<HomePage />} />
+    <Routes>
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/emailverification" element={<EmailVerificationPage />} />
+      <Route path="/" element={<HomePage />} />
+
+      <Route element={<PrivateRoute />}>
         <Route
           path="/home"
           element={
@@ -32,10 +36,26 @@ const Router = () => {
           }
         />
         <Route
+          path="/orderdetails"
+          element={
+            <LayoutTemplate>
+              <OrderDetails />
+            </LayoutTemplate>
+          }
+        />
+        <Route
           path="/ordertable"
           element={
             <LayoutTemplate>
               <OrderTablePage />
+            </LayoutTemplate>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <LayoutTemplate>
+              <EditUserForm />
             </LayoutTemplate>
           }
         />
@@ -96,8 +116,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
-      </Routes>
-    </>
+      </Route>
+    </Routes>
   );
 };
 

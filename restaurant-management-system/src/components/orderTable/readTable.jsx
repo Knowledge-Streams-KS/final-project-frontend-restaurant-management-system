@@ -11,7 +11,12 @@ const ReadOrderTable = () => {
 
   const fetchOrderTables = async () => {
     try {
-      const response = await axiosInstance.get("/ordertables");
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.get("/ordertables", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setOrderTables(response.data.orderTables);
     } catch (error) {
       console.error("Error fetching order tables:", error);

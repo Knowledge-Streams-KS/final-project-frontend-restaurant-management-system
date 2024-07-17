@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
 
 const AddOrderTable = ({ fetchOrderTables }) => {
+  const token = localStorage.getItem("token");
   const initialValues = {
     tableNo: "",
     seats: 5,
@@ -17,7 +18,11 @@ const AddOrderTable = ({ fetchOrderTables }) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const response = await axiosInstance.post("/ordertable", values);
+      const response = await axiosInstance.post("/ordertable", values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Table added successfully.";
       toast.success(successMessage);

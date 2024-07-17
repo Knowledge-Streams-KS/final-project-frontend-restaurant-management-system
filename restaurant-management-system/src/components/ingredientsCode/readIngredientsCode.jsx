@@ -9,7 +9,12 @@ const ReadIngredientsCode = () => {
 
   const fetchIngredientsCode = async () => {
     try {
-      const response = await axiosInstance.get("/ingredients/code");
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.get("/ingredients/code", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setIngredientsCodes(response.data.ingredients);
     } catch (error) {
       console.error("Error fetching ingredients:", error);

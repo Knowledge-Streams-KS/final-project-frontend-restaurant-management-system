@@ -4,7 +4,9 @@ import * as yup from "yup";
 import axiosInstance from "../../axios/axios";
 import toast from "react-hot-toast";
 
-const AddSalary = ({ employeeId, fetchSalaries, onEdit }) => {
+const AddSalary = ({ employeeId, fetchEmployees, onEdit }) => {
+  const token = localStorage.getItem("token");
+  console.log(employeeId);
   const validationSchema = yup.object().shape({
     salary: yup
       .number()
@@ -19,11 +21,20 @@ const AddSalary = ({ employeeId, fetchSalaries, onEdit }) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const response = await axiosInstance.post(`/salaries`, values);
+      const response = await axiosInstance.put(
+        `/user/salary/${employeeId}`,
+        values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log(response);
       const successMessage =
         response.data.message || "Salary added successfully.";
       toast.success(successMessage);
-      fetchSalaries();
+      fetchEmployees();
       onEdit(null);
       resetForm();
     } catch (error) {

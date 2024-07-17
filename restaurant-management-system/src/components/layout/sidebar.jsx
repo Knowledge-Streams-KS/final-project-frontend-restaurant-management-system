@@ -24,6 +24,13 @@ const Sidebar = ({ children }) => {
               </Link>
             </li>
             <li className="flex h-12 cursor-pointer items-center justify-center px-4 hover:bg-gray-800 sm:justify-start">
+              <Link to="/orderdetails" className="flex items-center">
+                <span className="ml-3 hidden font-semibold tracking-wide text-gray-400 transition-colors hover:text-white sm:block">
+                  Order Details
+                </span>
+              </Link>
+            </li>
+            <li className="flex h-12 cursor-pointer items-center justify-center px-4 hover:bg-gray-800 sm:justify-start">
               <Link to="/allstock" className="flex items-center">
                 <span className="ml-3 hidden font-semibold tracking-wide text-gray-400 transition-colors hover:text-white sm:block">
                   Total Stock

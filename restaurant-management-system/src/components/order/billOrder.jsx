@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const UpdateOrderBill = ({ orderId, fetchOrders, onEdit }) => {
   const [editMode, setEditMode] = useState(true);
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const validationSchema = yup.object().shape({
@@ -17,11 +18,16 @@ const UpdateOrderBill = ({ orderId, fetchOrders, onEdit }) => {
     paymentMethod: "",
   };
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values) => {
     try {
       const response = await axiosInstance.put(
         `/order/bill/${orderId}`,
         values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const successMessage =
         response.data.message || "Order completed successfully.";
@@ -99,7 +105,7 @@ const UpdateOrderBill = ({ orderId, fetchOrders, onEdit }) => {
                 className="mt-1 text-sm text-red-600"
               />
 
-              <div className="mt-3 flex">
+              <div className="mt-3">
                 <button
                   type="submit"
                   className="mr-2 flex-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axiosInstance from "../../axios/axios";
 import AddOrder from "./addOrder";
 import AddItemOrder from "./addItemOrder";
@@ -6,6 +6,7 @@ import DeleteOrder from "./deleteOrder";
 import UpdateOrderServed from "./updateOrder";
 import UpdateOrderBill from "./billOrder";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/authContext";
 
 const ReadOrder = () => {
   const navigate = useNavigate();
@@ -13,9 +14,17 @@ const ReadOrder = () => {
   const [orders, setOrders] = useState([]);
   const [editOrderId, setEditOrderId] = useState(null);
   const [editBillId, setEditBillId] = useState(null);
+  const { user } = useContext(AuthContext);
+  const userId = user.userId;
+  const token = localStorage.getItem("token");
+
   const fetchOrders = async () => {
     try {
-      const response = await axiosInstance.get("/orders");
+      const response = await axiosInstance.get("/orders", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -43,7 +52,7 @@ const ReadOrder = () => {
 
   return (
     <div className="container mx-auto px-4 sm:px-8">
-      <AddOrder fetchOrders={fetchOrders} />
+      <AddOrder fetchOrders={fetchOrders} userId={userId} />
       <div className="py-8">
         <div>
           <h2 className="text-2xl font-semibold leading-tight">Orders</h2>
@@ -148,6 +157,7 @@ const ReadOrder = () => {
                         {editOrderId === order.id ? (
                           <AddItemOrder
                             orderId={order.id}
+                            userId={userId}
                             fetchOrders={fetchOrders}
                             onEdit={handleEdit}
                           />

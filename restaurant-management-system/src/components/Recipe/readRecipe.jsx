@@ -5,12 +5,17 @@ import DeleteRecipe from "./deleteRecipe";
 import EditRecipe from "./editRecipe";
 
 const ReadRecipe = () => {
+  const token = localStorage.getItem("token");
   const [searchTerm, setSearchTerm] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [editRecipeId, setEditRecipeId] = useState(null);
   const fetchRecipes = async () => {
     try {
-      const response = await axiosInstance.get("/recipes");
+      const response = await axiosInstance.get("/recipes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setRecipes(response.data.allRecipe);
     } catch (error) {
       console.error("Error fetching Recipes:", error);

@@ -5,7 +5,12 @@ import toast from "react-hot-toast";
 const DeleteReservation = ({ bookingId, fetchBookings }) => {
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(`/reservation/${bookingId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/reservation/${bookingId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Reservation deleted successfully.";
       toast.success(successMessage);

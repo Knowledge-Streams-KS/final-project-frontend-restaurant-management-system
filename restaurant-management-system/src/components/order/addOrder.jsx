@@ -1,20 +1,25 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
 
-const AddOrder = (fetchOrders) => {
+const AddOrder = ({ fetchOrders, userId }) => {
+  const [loading, setLoading] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [selectedType, setSelectedType] = useState("");
   const [uniqueTypes, setUniqueTypes] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState("");
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const response = await axiosInstance.get("/reservations");
+        const response = await axiosInstance.get("/reservations", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const checkedInReservations = response.data.filter(
           (reservation) => reservation.status === "checked-in",
         );
@@ -26,7 +31,11 @@ const AddOrder = (fetchOrders) => {
 
     const fetchRecipes = async () => {
       try {
-        const response = await axiosInstance.get("/recipes");
+        const response = await axiosInstance.get("/recipes", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setRecipes(response.data.allRecipe || []);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -64,24 +73,30 @@ const AddOrder = (fetchOrders) => {
     ),
   });
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values) => {
+    setLoading(true);
     try {
       const orderData = {
-        userId: 3,
+        userId: userId,
         customerId: values.customerId,
         orderItems: values.orderItems.map((item) => ({
           recipeId: item.recipeId,
           quantity: item.quantity,
         })),
       };
-      const response = await axiosInstance.post("/order", orderData);
+      const response = await axiosInstance.post("/order", orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.success(response.data.message || "Order added successfully.");
       fetchOrders();
-      resetForm();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add order.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -287,11 +302,17 @@ const AddOrder = (fetchOrders) => {
                     </div>
                   )}
                 </FieldArray>
+
                 <button
-                  className="mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 font-semibold text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
+                  className={`w-1/4 rounded-lg py-3 font-semibold text-white transition-colors ${
+                    loading
+                      ? "cursor-not-allowed bg-gray-400"
+                      : "bg-gray-500 hover:bg-gray-600"
+                  }`}
                   type="submit"
+                  disabled={loading}
                 >
-                  Add Order
+                  {loading ? "Adding..." : "Add Order"}
                 </button>
               </Form>
             )}

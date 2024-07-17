@@ -5,7 +5,12 @@ import toast from "react-hot-toast";
 const DeleteOrder = ({ orderId, fetchOrders }) => {
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(`/order/${orderId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/order/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Order deleted successfully.";
       toast.success(successMessage);

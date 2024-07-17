@@ -17,9 +17,15 @@ const EditOrderTable = ({ tableId, fetchOrderTables, onEdit }) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
+      const token = localStorage.getItem("token");
       const response = await axiosInstance.put(
         `/ordertable/${tableId}`,
         values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const successMessage =
         response.data.message || "Table updated successfully.";

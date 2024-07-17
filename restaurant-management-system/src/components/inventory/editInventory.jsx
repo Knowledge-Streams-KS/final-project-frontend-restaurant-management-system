@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 
 const EditInventory = ({ inventoryId, fetchInventory, onEdit }) => {
   const [editMode, setEditMode] = useState(true);
-
+  const token = localStorage.getItem("token");
   const validationSchema = yup.object().shape({
     ingredientsId: yup.string(),
     quantity: yup.number().min(1, "Quantity must be at least 1"),
@@ -27,6 +27,11 @@ const EditInventory = ({ inventoryId, fetchInventory, onEdit }) => {
       const response = await axiosInstance.put(
         `/inventory/${inventoryId}`,
         values,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const successMessage =
         response.data.message || "Table updated successfully.";

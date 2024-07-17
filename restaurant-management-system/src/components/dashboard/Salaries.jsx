@@ -6,7 +6,12 @@ const CostFromSalary = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axiosInstance.get("/users");
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.get("/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const users = response.data.data;
       console.log(users);
       const totalSalary = users.reduce((total, user) => {

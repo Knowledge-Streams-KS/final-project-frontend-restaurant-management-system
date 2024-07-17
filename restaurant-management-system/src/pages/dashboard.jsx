@@ -1,8 +1,6 @@
 import OrderItemsDoughnutChart from "../components/dashboard/doughnutchart";
-
 import RevenueByDate from "../components/dashboard/revenue";
 import ReGraph from "../components/dashboard/revenueGraph";
-
 import CostFromSalary from "../components/dashboard/Salaries";
 
 const Dashboard = () => {

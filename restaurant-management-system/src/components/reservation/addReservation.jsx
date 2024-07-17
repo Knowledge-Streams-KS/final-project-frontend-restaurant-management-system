@@ -32,7 +32,8 @@ const AddReservation = ({ fetchBookings }) => {
     phoneNo: "",
     date: currentDate,
     reservedBy: "employee",
-    TimeSlotId: "",
+    TimeSlotId: 2,
+    seats: "",
   };
 
   const validationSchema = yup.object().shape({
@@ -46,15 +47,24 @@ const AddReservation = ({ fetchBookings }) => {
       .string()
       .matches(/^\d{11}$/, "Phone number must be exactly 11 digits")
       .required("Phone number is required"),
-    date: yup.date().required("Date is required"),
+
     reservedBy: yup.string(),
-    TimeSlotId: yup.string().required("Time Slot is required"),
+
+    seats: yup
+      .number()
+      .positive("Number of seats should be a positive number")
+      .integer("Number of seats should be an integer")
+      .required("Number of seats is required"),
   });
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      console.log(values);
-      const response = await axiosInstance.post("/reservation", values);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.post("/reservation", values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Reservation added successfully.";
       toast.success(successMessage);
@@ -143,6 +153,17 @@ const AddReservation = ({ fetchBookings }) => {
                     />
                     <p className="mt-1 text-sm text-red-600">
                       <ErrorMessage name="phoneNo" />
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <Field
+                      type="number"
+                      name="seats"
+                      placeholder="Seats"
+                      className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                    />
+                    <p className="mt-1 text-sm text-red-600">
+                      <ErrorMessage name="seats" />
                     </p>
                   </div>
                   <div className="mb-4">

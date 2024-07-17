@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import axiosInstance from "../axios/axios"; // Make sure to import axiosInstance
 import toast from "react-hot-toast";
+import axiosInstance from "../../axios/axios";
 
-const OTPForm = () => {
+const OTPForm = ({ email, onSubmit }) => {
   const [otpInputs, setOTPInputs] = useState(["", "", "", "", ""]);
-
+  const [loading, setLoading] = useState(false);
   const handleKeyDown = (e, index) => {
     if (
       !/^[0-9]{1}$/.test(e.key) &&
@@ -46,39 +46,39 @@ const OTPForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const otpCode = otpInputs.join("");
-      const customerId = 11; // Replace with your customer ID logic
       const response = await axiosInstance.post("/reservation/verify", {
         otpCode,
-        customerId,
+        email,
       });
-      console.log(response);
       const successMessage =
         response.data.message || "Reservation confirmed successfully.";
       toast.success(successMessage);
       setOTPInputs(["", "", "", "", ""]);
+      onSubmit(); // Notify parent component about successful OTP verification
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to confirm Reservation";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleResendOTP = async () => {
+    setLoading(true);
     try {
-      const customerId = 10; // Replace with your customer ID logic
-      const response = await axiosInstance.post("/reservation/otp", {
-        customerId,
-      });
-      console.log(response);
-      const successMessage = response.data.message || "OTP send again";
+      const response = await axiosInstance.post("/reservation/otp", { email });
+      const successMessage = response.data.message || "OTP sent again";
       toast.success(successMessage);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to resend OTP";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,25 +112,29 @@ const OTPForm = () => {
             </div>
             <div className="mx-auto mt-4 flex max-w-[260px] gap-2">
               <button
+                className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
+                  loading
+                    ? "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
                 type="submit"
-                className="w-full rounded-lg bg-gray-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-gray-600"
+                disabled={loading}
               >
-                Verify OTP
+                {loading ? "Verifying..." : "Verify OTP"}
               </button>
             </div>
           </form>
           <div className="mt-4 text-sm text-slate-500">
             Didn't receive code?{" "}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleResendOTP();
-              }}
-              className="font-medium text-indigo-500 hover:text-indigo-600"
+            <button
+              onClick={handleResendOTP}
+              className={`font-medium text-indigo-500 hover:text-indigo-600 ${
+                loading ? "cursor-not-allowed text-gray-400" : ""
+              }`}
+              disabled={loading}
             >
-              Resend
-            </a>
+              {loading ? "Resending..." : "Resend"}
+            </button>
           </div>
         </div>
       </div>
