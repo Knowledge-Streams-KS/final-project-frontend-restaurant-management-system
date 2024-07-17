@@ -6,11 +6,15 @@ const AllowAcess = ({ userId, fetchEmployees }) => {
   const token = localStorage.getItem("token");
   const handleAccess = async () => {
     try {
-      const response = await axiosInstance.patch(`/auth/user/allow/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axiosInstance.patch(
+        `/auth/user/allow/${userId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       const successMessage =
         response.data.message || "Access Allowed successfully.";
       toast.success(successMessage);

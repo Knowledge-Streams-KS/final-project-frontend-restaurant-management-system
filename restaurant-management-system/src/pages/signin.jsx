@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 const Signin = () => {
   const [loading, setLoading] = useState(false);
   const { signin } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const defaultValue = {
@@ -18,12 +19,16 @@ const Signin = () => {
     password: yup.string().required("Please Enter your Password"),
   });
   const handleSubmit = async (values) => {
-
     setLoading(true);
     try {
       const response = await signin(values.email, values.password);
-      if (response.status == 200) {
+      const role = response.data.userInfo.role;
+      if (response.status == 200 && role === "admin") {
         navigate("/home");
+      } else if (response.status == 200 && role === "waiter") {
+        navigate("/reservation");
+      } else {
+        navigate("/orderdetails");
       }
     } catch (error) {
       console.error("Sign-in error:", error);

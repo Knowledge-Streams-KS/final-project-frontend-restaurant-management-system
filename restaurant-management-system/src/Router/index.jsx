@@ -1,4 +1,5 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import React, { useContext } from "react";
+import { Routes, Route } from "react-router-dom";
 import Signup from "../pages/signup";
 import Signin from "../pages/signin";
 import HomePage from "../pages/home";
@@ -11,14 +12,20 @@ import BillPage from "../components/order/bill";
 import ReservationPage from "../pages/reservation";
 import EmployeePage from "../pages/employees";
 import EmailVerificationPage from "../pages/resendVerification";
-import LayoutTemplate from "../components/layout/Admin";
+
 import AllStock from "../pages/stock";
 import Dashboard from "../pages/dashboard";
 import PrivateRoute from "../context/protectedRoute";
 import EditUserForm from "../pages/editProfile";
 import OrderDetails from "../components/orderDetails/orderDetails";
+import { AuthContext } from "../context/authContext";
+import LayoutTemplate from "../components/layout/layout";
 
 const Router = () => {
+  const { user } = useContext(AuthContext);
+  const role = user?.role;
+
+
   return (
     <Routes>
       <Route path="/signup" element={<Signup />} />
@@ -30,7 +37,7 @@ const Router = () => {
         <Route
           path="/home"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <Dashboard />
             </LayoutTemplate>
           }
@@ -38,7 +45,7 @@ const Router = () => {
         <Route
           path="/orderdetails"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <OrderDetails />
             </LayoutTemplate>
           }
@@ -46,7 +53,7 @@ const Router = () => {
         <Route
           path="/ordertable"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <OrderTablePage />
             </LayoutTemplate>
           }
@@ -54,7 +61,7 @@ const Router = () => {
         <Route
           path="/profile"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <EditUserForm />
             </LayoutTemplate>
           }
@@ -62,7 +69,7 @@ const Router = () => {
         <Route
           path="/allstock"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <AllStock />
             </LayoutTemplate>
           }
@@ -70,7 +77,7 @@ const Router = () => {
         <Route
           path="/ingredients/code"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <IngedientsCodePage />
             </LayoutTemplate>
           }
@@ -78,7 +85,7 @@ const Router = () => {
         <Route
           path="/inventory"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <InventoryPage />
             </LayoutTemplate>
           }
@@ -86,7 +93,7 @@ const Router = () => {
         <Route
           path="/recipe"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <RecipePage />
             </LayoutTemplate>
           }
@@ -94,7 +101,7 @@ const Router = () => {
         <Route
           path="/reservation"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <ReservationPage />
             </LayoutTemplate>
           }
@@ -102,7 +109,7 @@ const Router = () => {
         <Route
           path="/order"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <OrderPage />
             </LayoutTemplate>
           }
@@ -111,7 +118,7 @@ const Router = () => {
         <Route
           path="/employee"
           element={
-            <LayoutTemplate>
+            <LayoutTemplate role={role}>
               <EmployeePage />
             </LayoutTemplate>
           }

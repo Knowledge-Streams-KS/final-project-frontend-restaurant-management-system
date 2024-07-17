@@ -75,7 +75,7 @@ const Signup = () => {
                   type="text"
                   name="fname"
                   placeholder="Enter your First Name"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="fname" />
@@ -86,7 +86,7 @@ const Signup = () => {
                   type="text"
                   name="lname"
                   placeholder="Enter your Last Name"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="lname" />
@@ -97,7 +97,7 @@ const Signup = () => {
                   type="email"
                   name="email"
                   placeholder="Enter your email"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="email" />
@@ -108,7 +108,7 @@ const Signup = () => {
                   type="password"
                   name="password"
                   placeholder="Enter your password"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="password" />
@@ -119,7 +119,7 @@ const Signup = () => {
                   type="password"
                   name="cnfmpassword"
                   placeholder="Enter your password again"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 />
                 <p className="mt-1 text-sm text-red-600">
                   <ErrorMessage name="cnfmpassword" />
@@ -129,7 +129,7 @@ const Signup = () => {
                 <Field
                   as="select"
                   name="role"
-                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-pink-300"
+                  className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
                 >
                   <option value="" label="Select your role" />
                   <option value="admin" label="Admin" />
