@@ -8,17 +8,20 @@ const EmployeeTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [employees, setEmployees] = useState([]);
   const [employeeId, setEmployeeId] = useState(null);
-
+  const token = localStorage.getItem("token");
+  const fetchEmployees = async () => {
+    try {
+      const response = await axiosInstance.get("/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setEmployees(response.data.data);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+    }
+  };
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await axiosInstance.get("/users");
-        setEmployees(response.data.data);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      }
-    };
-
     fetchEmployees();
   }, []);
   const filteredEmployees = employees.filter((employee) =>
@@ -130,8 +133,8 @@ const EmployeeTable = () => {
                     <td className="flex justify-center px-5 py-5 text-center text-sm">
                       {employeeId === employee.id ? (
                         <AddSalary
-                          fetchEmployees={filteredEmployees}
-                          userId={employee.id}
+                          fetchEmployees={fetchEmployees}
+                          employeeId={employee.id}
                           onEdit={handleEdit}
                         />
                       ) : (
@@ -143,11 +146,11 @@ const EmployeeTable = () => {
                             Salary
                           </button>
                           <AllowAcess
-                            fetchEmployees={filteredEmployees}
+                            fetchEmployees={fetchEmployees}
                             userId={employee.id}
                           />
                           <InvokeAcess
-                            fetchEmployees={filteredEmployees}
+                            fetchEmployees={fetchEmployees}
                             userId={employee.id}
                           />
                         </>

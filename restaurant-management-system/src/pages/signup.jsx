@@ -7,9 +7,8 @@ import { useNavigate, Link } from "react-router-dom";
 
 const Signup = () => {
   const { signup } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigate();
   const defaultValue = {
     fname: "",
     lname: "",

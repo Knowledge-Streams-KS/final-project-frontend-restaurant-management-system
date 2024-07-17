@@ -5,7 +5,12 @@ import toast from "react-hot-toast";
 const DeleteInventory = ({ inventoryId, fetchInventory }) => {
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(`/inventory/${inventoryId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/inventory/${inventoryId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Inventory deleted successfully.";
       toast.success(successMessage);

@@ -4,10 +4,14 @@ import axiosInstance from "../axios/axios";
 const AllStock = () => {
   const [stock, setStock] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const token = localStorage.getItem("token");
   const fetchStock = async () => {
     try {
-      const response = await axiosInstance.get("/allstock");
+      const response = await axiosInstance.get("/allstock", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setStock(response.data.allInventory);
     } catch (error) {
       console.error("Error fetching stock:", error);

@@ -5,6 +5,7 @@ import axiosInstance from "../../axios/axios";
 import toast from "react-hot-toast";
 
 const EditRecipe = ({ recipeId, fetchRecipes, onEdit }) => {
+  const token = localStorage.getItem("token");
   const [editMode, setEditMode] = useState(true);
   const [ingredientCodes, setIngredientCodes] = useState([]);
   const initialValues = {
@@ -19,7 +20,11 @@ const EditRecipe = ({ recipeId, fetchRecipes, onEdit }) => {
   useEffect(() => {
     const fetchIngredientCodes = async () => {
       try {
-        const response = await axiosInstance.get("/ingredients/code");
+        const response = await axiosInstance.get("/ingredients/code", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setIngredientCodes(response.data.ingredients || []);
       } catch (error) {
         console.error("Error fetching ingredient codes:", error);

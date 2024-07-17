@@ -7,7 +7,12 @@ const ReadReservation = () => {
   const [bookings, setBookings] = useState([]);
   const fetchBookings = async () => {
     try {
-      const response = await axiosInstance.get("/reservations");
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.get("/reservations", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setBookings(response.data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -64,6 +69,9 @@ const ReadReservation = () => {
                   </th>
                   <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                     Table No
+                  </th>
+                  <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
+                    Seats
                   </th>
                   <th className="border-b-2 border-gray-200 bg-gray-100 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                     Actions
@@ -129,9 +137,15 @@ const ReadReservation = () => {
                         <span className="relative">{booking.status}</span>
                       </span>
                     </td>
+
                     <td className="bg-white px-5 py-5 text-sm">
                       <p className="whitespace-no-wrap text-gray-900">
                         {booking.tableId}
+                      </p>
+                    </td>
+                    <td className="bg-white px-5 py-5 text-sm">
+                      <p className="whitespace-no-wrap text-gray-900">
+                        {booking.seats}
                       </p>
                     </td>
                     <td className="flex justify-center px-5 py-5 text-center text-sm">

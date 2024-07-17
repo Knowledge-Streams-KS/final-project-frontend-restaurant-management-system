@@ -5,7 +5,12 @@ import toast from "react-hot-toast";
 const DeleteRecipe = ({ recipeId, fetchRecipes }) => {
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(`/recipe/${recipeId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/recipe/${recipeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Recipe deleted successfully.";
       toast.success(successMessage);

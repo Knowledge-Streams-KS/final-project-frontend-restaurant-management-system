@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
 
 const AddIngredientsCode = ({ fetchIngredientsCode }) => {
-  // const {user}=
+  const token = localStorage.getItem("token");
 
   const initialValues = {
     name: "",
@@ -19,7 +19,11 @@ const AddIngredientsCode = ({ fetchIngredientsCode }) => {
   });
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const response = await axiosInstance.post("/ingredients/code", values);
+      const response = await axiosInstance.post("/ingredients/code", values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Ingredient added successfully.";
       toast.success(successMessage);

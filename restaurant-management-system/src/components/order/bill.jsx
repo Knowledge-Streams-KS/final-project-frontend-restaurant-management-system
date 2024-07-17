@@ -6,11 +6,15 @@ const BillPage = () => {
   const { orderId } = useParams();
   console.log(orderId);
   const [order, setOrder] = useState(null);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axiosInstance.get(`/order/${orderId}`);
+        const response = await axiosInstance.get(`/order/${orderId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const orderData = response.data;
         setOrder(orderData);
       } catch (error) {

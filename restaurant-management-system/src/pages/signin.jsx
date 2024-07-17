@@ -18,7 +18,7 @@ const Signin = () => {
     password: yup.string().required("Please Enter your Password"),
   });
   const handleSubmit = async (values) => {
-    console.log("values", values);
+
     setLoading(true);
     try {
       const response = await signin(values.email, values.password);

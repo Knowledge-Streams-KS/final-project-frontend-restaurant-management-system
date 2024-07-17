@@ -4,17 +4,21 @@ import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
 
-const AddItemOrder = ({ fetchOrders, orderId, onEdit }) => {
+const AddItemOrder = ({ fetchOrders, orderId, onEdit, userId }) => {
   const [recipes, setRecipes] = useState([]);
   const [selectedType, setSelectedType] = useState("");
   const [uniqueTypes, setUniqueTypes] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState("");
   const [editMode, setEditMode] = useState(true);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axiosInstance.get("/recipes");
+        const response = await axiosInstance.get("/recipes", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setRecipes(response.data.allRecipe || []);
       } catch (error) {
         console.error("Error fetching recipes:", error);
@@ -53,18 +57,21 @@ const AddItemOrder = ({ fetchOrders, orderId, onEdit }) => {
   const handleSubmit = async (values, { resetForm }) => {
     try {
       const orderData = {
-        userId: 3, // Assuming user ID is provided by the context or props
-
+        userId: userId,
         orderItems: values.orderItems.map((item) => ({
           recipeId: item.recipeId,
           quantity: item.quantity,
         })),
       };
-      const response = await axiosInstance.put(`/order/${orderId}`, orderData);
+      const response = await axiosInstance.put(`/order/${orderId}`, orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log(orderData);
       toast.success(response.data.message || "Order Item added successfully.");
-      resetForm();
       fetchOrders();
+      resetForm();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add order item.";
@@ -110,7 +117,7 @@ const AddItemOrder = ({ fetchOrders, orderId, onEdit }) => {
                     {values.orderItems.map((item, index) => (
                       <div
                         key={index}
-                        className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4"
+                        className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-2"
                       >
                         <div>
                           <Field

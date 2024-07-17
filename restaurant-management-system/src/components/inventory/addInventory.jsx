@@ -45,11 +45,16 @@ const AddInventory = ({ fetchInventory }) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
+      const token = localStorage.getItem("token");
       const formattedValues = {
         ...values,
         date: values.date.toLocaleDateString(),
       };
-      const response = await axiosInstance.post("/inventory", formattedValues);
+      const response = await axiosInstance.post("/inventory", formattedValues, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Ingredient added successfully.";
       toast.success(successMessage);

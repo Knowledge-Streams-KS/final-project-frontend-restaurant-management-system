@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
@@ -6,10 +6,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../axios/axios";
 
-const ReservationCustomer = ({ fetchBookings }) => {
+const ReservationCustomer = ({ toggleOTPForm }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTimeSlots = async () => {
@@ -33,6 +34,7 @@ const ReservationCustomer = ({ fetchBookings }) => {
     date: currentDate,
     reservedBy: "customer",
     TimeSlotId: "",
+    seats: "",
   };
 
   const validationSchema = yup.object().shape({
@@ -47,23 +49,30 @@ const ReservationCustomer = ({ fetchBookings }) => {
       .matches(/^\d{11}$/, "Phone number must be exactly 11 digits")
       .required("Phone number is required"),
     date: yup.date().required("Date is required"),
-
     TimeSlotId: yup.string().required("Time Slot is required"),
+    seats: yup
+      .number()
+      .positive("Number of seats should be a positive number")
+      .integer("Number of seats should be an integer")
+      .required("Number of seats is required"),
   });
 
   const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
     try {
       console.log(values);
       const response = await axiosInstance.post("/reservation", values);
       const successMessage =
         response.data.message || "Reservation added successfully.";
       toast.success(successMessage);
-      fetchBookings();
       resetForm();
+      toggleOTPForm(values.email);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add Reservation";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,13 +190,28 @@ const ReservationCustomer = ({ fetchBookings }) => {
                       <ErrorMessage name="TimeSlotId" />
                     </p>
                   </div>
+                  <div className="mb-4">
+                    <Field
+                      type="number"
+                      name="seats"
+                      placeholder="Seats"
+                      className="w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring focus:ring-gray-300"
+                    />
+                    <p className="mt-1 text-sm text-red-600">
+                      <ErrorMessage name="seats" />
+                    </p>
+                  </div>
                 </div>
-
                 <button
-                  className="mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 font-semibold text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
+                  className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
+                    loading
+                      ? "cursor-not-allowed bg-gray-400"
+                      : "bg-gray-500 hover:bg-gray-600"
+                  }`}
                   type="submit"
+                  disabled={loading}
                 >
-                  Add Reservation
+                  {loading ? "Please Wait..." : "Add Reservation"}
                 </button>
               </Form>
             )}

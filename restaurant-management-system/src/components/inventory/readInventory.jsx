@@ -8,10 +8,14 @@ const ReadInventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [Inventories, setInventories] = useState([]);
   const [editInventoryId, setInventoryId] = useState(null);
-
+  const token = localStorage.getItem("token");
   const fetchInventory = async () => {
     try {
-      const response = await axiosInstance.get("/inventory");
+      const response = await axiosInstance.get("/inventory", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setInventories(response.data.allInventory);
     } catch (error) {
       console.error("Error fetching inventory:", error);

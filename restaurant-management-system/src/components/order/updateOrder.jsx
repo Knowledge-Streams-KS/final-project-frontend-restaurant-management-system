@@ -5,7 +5,16 @@ import toast from "react-hot-toast";
 const UpdateOrderServed = ({ orderId, fetchOrders }) => {
   const handleUpdate = async () => {
     try {
-      const response = await axiosInstance.put(`/order/served/${orderId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.patch(
+        `/order/served/${orderId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       const successMessage =
         response.data.message || "Order served successfully.";
       toast.success(successMessage);

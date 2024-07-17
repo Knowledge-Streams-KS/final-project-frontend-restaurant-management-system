@@ -5,7 +5,12 @@ import toast from "react-hot-toast";
 const DeleteOrderTable = ({ tableId, fetchOrderTables }) => {
   const handleDelete = async () => {
     try {
-      const response = await axiosInstance.delete(`/ordertable/${tableId}`);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.delete(`/ordertable/${tableId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Table deleted successfully.";
       toast.success(successMessage);

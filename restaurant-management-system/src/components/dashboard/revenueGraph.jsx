@@ -4,7 +4,6 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { fetchOrders } from "./fetchOrders";
 
-// Optionally set defaults
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 defaults.plugins.title.display = true;
@@ -19,22 +18,18 @@ const ReGraph = () => {
     const fetchData = async () => {
       try {
         const orders = await fetchOrders();
-
-        // Process data to get daily revenue
         const dailyData = orders.reduce((acc, order) => {
           const date = new Date(order.createdAt);
-          const day = date.toISOString().split("T")[0]; // Get YYYY-MM-DD format
+          const day = date.toISOString().split("T")[0];
 
           if (!acc[day]) {
             acc[day] = { revenue: 0, cost: 0 };
           }
-          acc[day].revenue += order.totalAmountWithTax; // Assuming totalAmountWithTax is the revenue
-          acc[day].cost += order.cost || 0; // Adjust as per your data structure
+          acc[day].revenue += order.totalAmountWithTax;
 
           return acc;
         }, {});
 
-        // Transform into array sorted by date
         const sortedData = Object.keys(dailyData)
           .sort((a, b) => new Date(a) - new Date(b))
           .map((key) => ({
@@ -64,12 +59,6 @@ const ReGraph = () => {
                 data: revenueData.map((data) => data.revenue),
                 backgroundColor: "#064FF0",
                 borderColor: "#064FF0",
-              },
-              {
-                label: "Cost",
-                data: revenueData.map((data) => data.cost),
-                backgroundColor: "#FF3030",
-                borderColor: "#FF3030",
               },
             ],
           }}
