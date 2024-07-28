@@ -4,6 +4,7 @@ import * as yup from "yup";
 import { AuthContext } from "../context/authContext";
 import { useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { BeatLoader } from "react-spinners";
 const Signin = () => {
   const [loading, setLoading] = useState(false);
   const { signin } = useContext(AuthContext);
@@ -78,7 +79,7 @@ const Signin = () => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "Logging..." : "Login"}
+                {loading ? <BeatLoader size={10} color="#ffffff" /> : "Login"}
               </button>
 
               <div className="mt-4 text-center">

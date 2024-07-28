@@ -3,11 +3,13 @@ import axiosInstance from "../../axios/axios";
 import EditOrderTable from "./editTable";
 import DeleteOrderTable from "./deleteTable";
 import AddOrderTable from "./addTable";
+import { BeatLoader } from "react-spinners";
 
 const ReadOrderTable = () => {
   const [orderTables, setOrderTables] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editTableId, setEditTableId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchOrderTables = async () => {
     try {
@@ -20,6 +22,8 @@ const ReadOrderTable = () => {
       setOrderTables(response.data.orderTables);
     } catch (error) {
       console.error("Error fetching order tables:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,41 +72,57 @@ const ReadOrderTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrderTables.map((table) => (
-                  <tr className="border-b border-gray-200" key={table.id}>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {table.id}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {table.tableNo}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {table.seats}
-                    </td>
-                    <td className="flex justify-center px-5 py-5 text-center text-sm">
-                      {editTableId === table.id ? (
-                        <EditOrderTable
-                          tableId={table.id}
-                          fetchOrderTables={fetchOrderTables}
-                          onEdit={handleEdit}
-                        />
-                      ) : (
-                        <>
-                          <button
-                            className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-                            onClick={() => handleEdit(table.id)}
-                          >
-                            Edit
-                          </button>
-                          <DeleteOrderTable
-                            tableId={table.id}
-                            fetchOrderTables={fetchOrderTables}
-                          />
-                        </>
-                      )}
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredOrderTables.length > 0 ? (
+                  filteredOrderTables.map((table) => (
+                    <tr className="border-b border-gray-200" key={table.id}>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {table.id}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {table.tableNo}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {table.seats}
+                      </td>
+                      <td className="flex justify-center px-5 py-5 text-center text-sm">
+                        {editTableId === table.id ? (
+                          <EditOrderTable
+                            tableId={table.id}
+                            fetchOrderTables={fetchOrderTables}
+                            onEdit={handleEdit}
+                          />
+                        ) : (
+                          <>
+                            <button
+                              className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                              onClick={() => handleEdit(table.id)}
+                            >
+                              Edit
+                            </button>
+                            <DeleteOrderTable
+                              tableId={table.id}
+                              fetchOrderTables={fetchOrderTables}
+                            />
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-5 py-5 text-center text-sm">
+                      No order table found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

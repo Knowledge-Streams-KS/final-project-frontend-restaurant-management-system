@@ -3,6 +3,7 @@ import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
+import { BeatLoader } from "react-spinners";
 
 const AddOrder = ({ fetchOrders, userId }) => {
   const [loading, setLoading] = useState(false);
@@ -12,36 +13,40 @@ const AddOrder = ({ fetchOrders, userId }) => {
   const [uniqueTypes, setUniqueTypes] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState("");
   const token = localStorage.getItem("token");
+
+  const fetchReservations = async () => {
+    try {
+      const response = await axiosInstance.get("/reservations", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const checkedInReservations = response.data.filter(
+        (reservation) =>
+          (reservation.status === "checked-in" ||
+            reservation.status === "confirmed") &&
+          reservation.Customer.Orders.length === 0,
+      );
+      setReservations(checkedInReservations || []);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
+  };
+
+  const fetchRecipes = async () => {
+    try {
+      const response = await axiosInstance.get("/recipes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setRecipes(response.data.allRecipe || []);
+    } catch (error) {
+      console.error("Error fetching recipes:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await axiosInstance.get("/reservations", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const checkedInReservations = response.data.filter(
-          (reservation) => reservation.status === "checked-in",
-        );
-        setReservations(checkedInReservations || []);
-      } catch (error) {
-        console.error("Error fetching reservations:", error);
-      }
-    };
-
-    const fetchRecipes = async () => {
-      try {
-        const response = await axiosInstance.get("/recipes", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setRecipes(response.data.allRecipe || []);
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      }
-    };
-
     fetchReservations();
     fetchRecipes();
   }, []);
@@ -73,7 +78,7 @@ const AddOrder = ({ fetchOrders, userId }) => {
     ),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { resetForm }) => {
     setLoading(true);
     try {
       const orderData = {
@@ -91,6 +96,9 @@ const AddOrder = ({ fetchOrders, userId }) => {
       });
       toast.success(response.data.message || "Order added successfully.");
       fetchOrders();
+      fetchReservations(); // Re-fetch reservations after adding the order
+
+      resetForm();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to add order.";
@@ -312,7 +320,11 @@ const AddOrder = ({ fetchOrders, userId }) => {
                   type="submit"
                   disabled={loading}
                 >
-                  {loading ? "Adding..." : "Add Order"}
+                  {loading ? (
+                    <BeatLoader size={10} color="#ffffff" />
+                  ) : (
+                    "Add Order"
+                  )}
                 </button>
               </Form>
             )}

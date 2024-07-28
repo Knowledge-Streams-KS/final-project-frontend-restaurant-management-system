@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../axios/axios";
 import { useParams } from "react-router-dom";
+import Logo from "../../assets/Logo/logo.png";
+import { FadeLoader } from "react-spinners";
 
 const BillPage = () => {
   const { orderId } = useParams();
-  console.log(orderId);
   const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false); // Add error state
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -16,9 +20,16 @@ const BillPage = () => {
           },
         });
         const orderData = response.data;
-        setOrder(orderData);
+        if (orderData) {
+          setOrder(orderData);
+        } else {
+          setError(true);
+        }
       } catch (error) {
         console.error("Failed to fetch order:", error);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -29,8 +40,20 @@ const BillPage = () => {
     window.print();
   };
 
-  if (!order) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <FadeLoader color="#111827" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-lg text-gray-700">No order found</p>
+      </div>
+    );
   }
 
   return (
@@ -45,9 +68,13 @@ const BillPage = () => {
         `}
       </style>
       <div className="mx-auto mt-8 max-w-md rounded-lg border bg-white px-6 py-8 shadow-lg">
-        <h1 className="my-4 text-center text-2xl font-bold text-blue-600">
-          Restaurant Management System
-        </h1>
+        <div className="flex flex-col items-center">
+          <img src={Logo} alt="Company Logo" className="w-1/3" />
+          <h1 className="my-4 text-center text-2xl font-bold text-blue-600">
+            Restaurant Management System
+          </h1>
+        </div>
+
         <hr className="mb-2" />
         <div className="mb-4">
           <h1 className="text-center text-lg font-bold">
@@ -71,7 +98,7 @@ const BillPage = () => {
           <h2 className="text-md font-bold">
             Phone Number:
             <span className="ml-2 font-light text-gray-700">
-              +{order.Customer.phoneNo}
+              {order.Customer.phoneNo}
             </span>
           </h2>
           <h2 className="text-md font-bold">

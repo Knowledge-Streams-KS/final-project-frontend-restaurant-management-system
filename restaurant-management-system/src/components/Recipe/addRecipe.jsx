@@ -59,8 +59,12 @@ const AddRecipe = ({ fetchRecipes }) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      console.log(values);
-      const response = await axiosInstance.post("/recipe", values);
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.post("/recipe", values, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const successMessage =
         response.data.message || "Recipe added successfully.";
       toast.success(successMessage);

@@ -3,11 +3,14 @@ import axiosInstance from "../../axios/axios";
 import AddInventory from "./addInventory";
 import DeleteInventory from "./deleteInventory";
 import EditInventory from "./editInventory";
+import { BeatLoader } from "react-spinners";
 
 const ReadInventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [Inventories, setInventories] = useState([]);
   const [editInventoryId, setInventoryId] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const token = localStorage.getItem("token");
   const fetchInventory = async () => {
     try {
@@ -19,6 +22,8 @@ const ReadInventory = () => {
       setInventories(response.data.allInventory);
     } catch (error) {
       console.error("Error fetching inventory:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,47 +77,63 @@ const ReadInventory = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredInvetories.map((inventory) => (
-                  <tr className="border-b border-gray-200" key={inventory.id}>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {inventory.id}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {inventory.ingredientsId}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {inventory.quantity}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {inventory.unitPrice}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {new Date(inventory.date).toLocaleDateString()}
-                    </td>
-                    <td className="flex justify-center px-5 py-5 text-center text-sm">
-                      {editInventoryId === inventory.id ? (
-                        <EditInventory
-                          inventoryId={inventory.id}
-                          fetchInventory={fetchInventory}
-                          onEdit={handleEdit}
-                        />
-                      ) : (
-                        <>
-                          <button
-                            className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-                            onClick={() => handleEdit(inventory.id)}
-                          >
-                            Edit
-                          </button>
-                          <DeleteInventory
-                            inventoryId={inventory.id}
-                            fetchInventory={fetchInventory}
-                          />
-                        </>
-                      )}
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredInvetories.length > 0 ? (
+                  filteredInvetories.map((inventory) => (
+                    <tr className="border-b border-gray-200" key={inventory.id}>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {inventory.id}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {inventory.ingredientsId}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {inventory.quantity}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {inventory.unitPrice}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {new Date(inventory.date).toLocaleDateString()}
+                      </td>
+                      <td className="flex justify-center px-5 py-5 text-center text-sm">
+                        {editInventoryId === inventory.id ? (
+                          <EditInventory
+                            inventoryId={inventory.id}
+                            fetchInventory={fetchInventory}
+                            onEdit={handleEdit}
+                          />
+                        ) : (
+                          <>
+                            <button
+                              className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                              onClick={() => handleEdit(inventory.id)}
+                            >
+                              Edit
+                            </button>
+                            <DeleteInventory
+                              inventoryId={inventory.id}
+                              fetchInventory={fetchInventory}
+                            />
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="px-5 py-5 text-center text-sm">
+                      No Inventory found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

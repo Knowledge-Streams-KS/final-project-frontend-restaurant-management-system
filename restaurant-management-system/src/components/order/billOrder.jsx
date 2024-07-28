@@ -72,9 +72,7 @@ const UpdateOrderBill = ({ orderId, fetchOrders, onEdit }) => {
         >
           {({ setFieldValue, values }) => (
             <Form className="rounded-md border bg-gray-100 p-4">
-              <h2 className="mb-2 text-lg font-semibold">
-                Update Order Payment Method
-              </h2>
+              <h2 className="mb-2 text-lg font-semibold">Payment Method</h2>
               <div className="mb-4">
                 <button
                   type="button"
@@ -108,7 +106,7 @@ const UpdateOrderBill = ({ orderId, fetchOrders, onEdit }) => {
               <div className="mt-3">
                 <button
                   type="submit"
-                  className="mr-2 flex-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                  className="mb-2 mr-2 flex-1 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                 >
                   Generate Bill
                 </button>

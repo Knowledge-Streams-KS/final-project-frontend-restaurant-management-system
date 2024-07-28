@@ -70,7 +70,7 @@ const ReGraph = () => {
             },
             plugins: {
               title: {
-                text: "Daily Revenue & Cost",
+                text: "Daily Revenue",
               },
             },
           }}

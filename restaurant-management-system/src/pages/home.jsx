@@ -2,9 +2,10 @@ import { useState } from "react";
 import AboutUs from "../components/User/aboutus";
 import Footer from "../components/User/footer";
 import HeroSection from "../components/User/herosection";
-import ReservationCustomer from "../components/User/reservation";
 import ThankYouMessage from "../components/User/thankyou";
-import OTPForm from "../components/User/otpverification"; // Import OTPForm
+import OTPForm from "../components/User/otpverification";
+import ReservationWrapper from "../components/User/reservationwrapper";
+import ReservationCustomer from "../components/User/reservation";
 
 const HomePage = () => {
   const [showOTPForm, setShowOTPForm] = useState(false);
@@ -26,12 +27,20 @@ const HomePage = () => {
       <HeroSection />
       <AboutUs />
       {!showOTPForm && !showThankYouForm && (
-        <ReservationCustomer toggleOTPForm={toggleOTPForm} />
+        <ReservationWrapper>
+          <ReservationCustomer toggleOTPForm={toggleOTPForm} />
+        </ReservationWrapper>
       )}
       {showOTPForm && (
-        <OTPForm email={emailForOTP} onSubmit={handleOTPFormSubmit} />
+        <ReservationWrapper>
+          <OTPForm email={emailForOTP} onSubmit={handleOTPFormSubmit} />
+        </ReservationWrapper>
       )}
-      {showThankYouForm && <ThankYouMessage />}
+      {showThankYouForm && (
+        <ReservationWrapper>
+          <ThankYouMessage />
+        </ReservationWrapper>
+      )}
       <Footer />
     </>
   );

@@ -1,10 +1,12 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
+import { BeatLoader } from "react-spinners";
 
 const AddIngredientsCode = ({ fetchIngredientsCode }) => {
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   const initialValues = {
@@ -18,6 +20,7 @@ const AddIngredientsCode = ({ fetchIngredientsCode }) => {
     unit: yup.string().required("Unit is required"),
   });
   const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post("/ingredients/code", values, {
         headers: {
@@ -33,6 +36,8 @@ const AddIngredientsCode = ({ fetchIngredientsCode }) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add ingredient.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,10 +90,19 @@ const AddIngredientsCode = ({ fetchIngredientsCode }) => {
                 </div>
               </div>
               <button
-                className="px-3font-semibold mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
+                className={`w-1/4 rounded-lg py-3 font-semibold text-white transition-colors ${
+                  loading
+                    ? "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
                 type="submit"
+                disabled={loading}
               >
-                Add Ingredient
+                {loading ? (
+                  <BeatLoader size={10} color="#ffffff" />
+                ) : (
+                  "Add Ingredients"
+                )}
               </button>
             </Form>
           </Formik>

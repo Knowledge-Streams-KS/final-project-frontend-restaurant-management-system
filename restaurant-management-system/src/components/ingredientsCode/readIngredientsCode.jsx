@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../../axios/axios";
 import DeleteIngredientsCode from "./deleteIngredientsCode";
 import AddIngredientsCode from "./addIngredientsCode";
-
+import { BeatLoader } from "react-spinners";
 const ReadIngredientsCode = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [ingredientsCodes, setIngredientsCodes] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   const fetchIngredientsCode = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -18,6 +18,8 @@ const ReadIngredientsCode = () => {
       setIngredientsCodes(response.data.ingredients);
     } catch (error) {
       console.error("Error fetching ingredients:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,28 +67,44 @@ const ReadIngredientsCode = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredIngredientsCode.map((ingredientCode) => (
-                  <tr
-                    key={ingredientCode.id}
-                    className="border-b border-gray-200"
-                  >
-                    <td className="px-5 py-5 text-center text-sm">
-                      {ingredientCode.name}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {ingredientCode.code}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {ingredientCode.unit}
-                    </td>
-                    <td className="flex justify-center px-5 py-5 text-center text-sm">
-                      <DeleteIngredientsCode
-                        codeId={ingredientCode.code}
-                        fetchIngredientsCode={fetchIngredientsCode}
-                      />
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredIngredientsCode.length > 0 ? (
+                  filteredIngredientsCode.map((ingredientCode) => (
+                    <tr
+                      key={ingredientCode.id}
+                      className="border-b border-gray-200"
+                    >
+                      <td className="px-5 py-5 text-center text-sm">
+                        {ingredientCode.name}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {ingredientCode.code}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {ingredientCode.unit}
+                      </td>
+                      <td className="flex justify-center px-5 py-5 text-center text-sm">
+                        <DeleteIngredientsCode
+                          codeId={ingredientCode.code}
+                          fetchIngredientsCode={fetchIngredientsCode}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-5 py-5 text-center text-sm">
+                      No Ingredient Code found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

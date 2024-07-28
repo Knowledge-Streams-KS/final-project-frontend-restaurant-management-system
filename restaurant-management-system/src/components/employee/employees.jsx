@@ -3,11 +3,13 @@ import AllowAcess from "./allowAcess";
 import InvokeAcess from "./invokeAcess";
 import axiosInstance from "../../axios/axios";
 import AddSalary from "./setSalary";
+import { BeatLoader } from "react-spinners";
 
 const EmployeeTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [employees, setEmployees] = useState([]);
   const [employeeId, setEmployeeId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const fetchEmployees = async () => {
     try {
@@ -19,6 +21,8 @@ const EmployeeTable = () => {
       setEmployees(response.data.data);
     } catch (error) {
       console.error("Error fetching employees:", error);
+    } finally {
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -77,87 +81,103 @@ const EmployeeTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredEmployees.map((employee) => (
-                  <tr className="border-b border-gray-200" key={employee.id}>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {employee.id}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {employee.firstName} {employee.lastName}
-                    </td>
-
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {employee.email}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {employee.role}
-                    </td>
-
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      <span
-                        className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
-                          employee.verified
-                            ? "bg-green-200 text-green-900"
-                            : "bg-red-200 text-red-900"
-                        }`}
-                      >
-                        <span
-                          aria-hidden
-                          className="absolute inset-0 rounded-full opacity-50"
-                        ></span>
-                        <span className="relative">
-                          {employee.verified ? "Yes" : "No"}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      {employee.salary}
-                    </td>
-                    <td className="bg-white px-5 py-5 text-center text-sm">
-                      <span
-                        className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
-                          employee.allowAcess
-                            ? "bg-green-200 text-green-900"
-                            : "bg-red-200 text-red-900"
-                        }`}
-                      >
-                        <span
-                          aria-hidden
-                          className="absolute inset-0 rounded-full opacity-50"
-                        ></span>
-                        <span className="relative">
-                          {employee.allowAcess ? "Yes" : "No"}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="flex justify-center px-5 py-5 text-center text-sm">
-                      {employeeId === employee.id ? (
-                        <AddSalary
-                          fetchEmployees={fetchEmployees}
-                          employeeId={employee.id}
-                          onEdit={handleEdit}
-                        />
-                      ) : (
-                        <>
-                          <button
-                            className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-                            onClick={() => handleEdit(employee.id)}
-                          >
-                            Salary
-                          </button>
-                          <AllowAcess
-                            fetchEmployees={fetchEmployees}
-                            userId={employee.id}
-                          />
-                          <InvokeAcess
-                            fetchEmployees={fetchEmployees}
-                            userId={employee.id}
-                          />
-                        </>
-                      )}
+                {loading ? (
+                  <tr>
+                    <td colSpan="8" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredEmployees.length > 0 ? (
+                  filteredEmployees.map((employee) => (
+                    <tr className="border-b border-gray-200" key={employee.id}>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {employee.id}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {employee.firstName} {employee.lastName}
+                      </td>
+
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {employee.email}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {employee.role}
+                      </td>
+
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        <span
+                          className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
+                            employee.verified
+                              ? "bg-green-200 text-green-900"
+                              : "bg-red-200 text-red-900"
+                          }`}
+                        >
+                          <span
+                            aria-hidden
+                            className="absolute inset-0 rounded-full opacity-50"
+                          ></span>
+                          <span className="relative">
+                            {employee.verified ? "Yes" : "No"}
+                          </span>
+                        </span>
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        {employee.salary}
+                      </td>
+                      <td className="bg-white px-5 py-5 text-center text-sm">
+                        <span
+                          className={`relative inline-block rounded-full px-3 py-1 font-semibold leading-tight ${
+                            employee.allowAcess
+                              ? "bg-green-200 text-green-900"
+                              : "bg-red-200 text-red-900"
+                          }`}
+                        >
+                          <span
+                            aria-hidden
+                            className="absolute inset-0 rounded-full opacity-50"
+                          ></span>
+                          <span className="relative">
+                            {employee.allowAcess ? "Yes" : "No"}
+                          </span>
+                        </span>
+                      </td>
+                      <td className="flex justify-center px-5 py-5 text-center text-sm">
+                        {employeeId === employee.id ? (
+                          <AddSalary
+                            fetchEmployees={fetchEmployees}
+                            employeeId={employee.id}
+                            onEdit={handleEdit}
+                          />
+                        ) : (
+                          <>
+                            <button
+                              className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
+                              onClick={() => handleEdit(employee.id)}
+                            >
+                              Salary
+                            </button>
+                            <AllowAcess
+                              fetchEmployees={fetchEmployees}
+                              userId={employee.id}
+                            />
+                            <InvokeAcess
+                              fetchEmployees={fetchEmployees}
+                              userId={employee.id}
+                            />
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="px-5 py-5 text-center text-sm">
+                      No Employees Found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

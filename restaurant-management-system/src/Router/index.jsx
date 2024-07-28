@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Signup from "../pages/signup";
 import Signin from "../pages/signin";
 import HomePage from "../pages/home";
-import IngedientsCodePage from "../pages/ingredientsCode";
+import IngredientsCodePage from "../pages/ingredientsCode";
 import InventoryPage from "../pages/inventory";
 import OrderTablePage from "../pages/orderTable";
 import RecipePage from "../pages/recipes";
@@ -12,7 +12,6 @@ import BillPage from "../components/order/bill";
 import ReservationPage from "../pages/reservation";
 import EmployeePage from "../pages/employees";
 import EmailVerificationPage from "../pages/resendVerification";
-
 import AllStock from "../pages/stock";
 import Dashboard from "../pages/dashboard";
 import PrivateRoute from "../context/protectedRoute";
@@ -20,20 +19,37 @@ import EditUserForm from "../pages/editProfile";
 import OrderDetails from "../components/orderDetails/orderDetails";
 import { AuthContext } from "../context/authContext";
 import LayoutTemplate from "../components/layout/layout";
+import NotFound from "../pages/notfound";
+import RedirectIfAuthenticated from "../context/redirect";
 
 const Router = () => {
   const { user } = useContext(AuthContext);
-  const role = user?.role;
 
+  const role = user?.role;
 
   return (
     <Routes>
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/signin" element={<Signin />} />
+      <Route
+        path="/signup"
+        element={
+          <RedirectIfAuthenticated>
+            <Signup />
+          </RedirectIfAuthenticated>
+        }
+      />
+      <Route
+        path="/signin"
+        element={
+          <RedirectIfAuthenticated>
+            <Signin />
+          </RedirectIfAuthenticated>
+        }
+      />
       <Route path="/emailverification" element={<EmailVerificationPage />} />
       <Route path="/" element={<HomePage />} />
+      <Route path="*" element={<NotFound />} />
 
-      <Route element={<PrivateRoute />}>
+      <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route
           path="/home"
           element={
@@ -42,6 +58,10 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route
+        element={<PrivateRoute allowedRoles={["admin", "chef", "waiter"]} />}
+      >
         <Route
           path="/orderdetails"
           element={
@@ -50,6 +70,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin", "waiter"]} />}>
         <Route
           path="/ordertable"
           element={
@@ -58,6 +80,10 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route
+        element={<PrivateRoute allowedRoles={["admin", "waiter", "chef"]} />}
+      >
         <Route
           path="/profile"
           element={
@@ -66,6 +92,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route
           path="/allstock"
           element={
@@ -74,14 +102,18 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin", "chef"]} />}>
         <Route
           path="/ingredients/code"
           element={
             <LayoutTemplate role={role}>
-              <IngedientsCodePage />
+              <IngredientsCodePage />
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route
           path="/inventory"
           element={
@@ -90,6 +122,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin", "chef"]} />}>
         <Route
           path="/recipe"
           element={
@@ -98,6 +132,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin", "waiter"]} />}>
         <Route
           path="/reservation"
           element={
@@ -106,6 +142,8 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
+      </Route>
+      <Route element={<PrivateRoute allowedRoles={["admin", "waiter"]} />}>
         <Route
           path="/order"
           element={
@@ -114,7 +152,9 @@ const Router = () => {
             </LayoutTemplate>
           }
         />
-        <Route path="/order/bill/:orderId" element={<BillPage />} />
+      </Route>
+      <Route path="/order/bill/:orderId" element={<BillPage />} />
+      <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
         <Route
           path="/employee"
           element={

@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
 import PreparedOrder from "./prepareOrder";
+import { BeatLoader } from "react-spinners";
+import { io } from "socket.io-client";
 
 const OrderDetails = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("pending"); // Default to "pending"
+  const [loading, setLoading] = useState(true);
+  const [socket, setSocket] = useState(null);
 
   const fetchOrders = async () => {
     try {
@@ -20,18 +24,96 @@ const OrderDetails = () => {
     } catch (error) {
       toast.error("Error fetching orders");
       console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchOrders();
+    const newSocket = io("http://localhost:3000");
+    console.log("Attempting to connect to socket...");
+    newSocket.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+    });
+    newSocket.on("orderStatusUpdated", (updatedOrder) => {
+      console.log("Order status updated:", updatedOrder);
+      setOrders((prevOrders) => {
+        const updatedOrders = prevOrders.map((order) => {
+          console.log(
+            "order id",
+            order.id,
+            "updated order id",
+            updatedOrder.id,
+          );
+          if (order.id == updatedOrder.id) {
+            console.log(
+              `Updating order ${order.id} status from ${order.status} to ${updatedOrder.status}`,
+            );
+            return { ...order, status: updatedOrder.status };
+          }
+          return order;
+        });
+        console.log("Updated orders:", updatedOrders);
+        return updatedOrders;
+      });
+    });
+    newSocket.on("newOrder", async (newOrder) => {
+      console.log("New order added:", newOrder);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axiosInstance.get(`/order/${newOrder.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const completeOrder = response.data;
+
+        setOrders((prevOrders) => [completeOrder, ...prevOrders]);
+      } catch (error) {
+        console.error("Error fetching new order details:", error);
+        toast.error("Error fetching new order details");
+      }
+    });
+
+    // Listen for order updates
+    newSocket.on("orderUpdated", async ({ id, orderItems }) => {
+      console.log("Order updated with new items:", { id, orderItems });
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axiosInstance.get(`/order/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const updatedOrder = response.data;
+
+        setOrders((prevOrders) =>
+          prevOrders.map((order) => (order.id === id ? updatedOrder : order)),
+        );
+      } catch (error) {
+        console.error("Error fetching updated order details:", error);
+        toast.error("Error fetching updated order details");
+      }
+    });
+
+    newSocket.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      console.log("Disconnecting socket...");
+      newSocket.disconnect();
+    };
   }, []);
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      order["Order Items"]?.some((item) =>
-        item.Recipe?.title.toLowerCase().includes(searchTerm.toLowerCase()),
-      ) && (statusFilter ? order.status === statusFilter : true),
-  );
+  const filteredOrders = orders
+    .filter((order) => `${order.id}`.includes(searchTerm.toLowerCase()))
+    .filter((order) =>
+      statusFilter === "" ? true : order.status === statusFilter,
+    );
 
   return (
     <div className="container mx-auto px-4 sm:px-8">
@@ -40,7 +122,7 @@ const OrderDetails = () => {
           <h2 className="text-2xl font-semibold leading-tight">Orders</h2>
           <input
             type="text"
-            placeholder="Search by recipe title..."
+            placeholder="Search by order Id..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="mt-4 rounded-md border border-gray-300 p-2"
@@ -83,26 +165,37 @@ const OrderDetails = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredOrders.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => (
                     <tr className="border-b border-gray-200" key={order.id}>
                       <td className="px-5 py-5 text-center text-sm">
                         {order.id}
                       </td>
                       <td className="px-5 py-5 text-center text-sm">
-                        {order["Order Items"]
-                          .map((item) => item.Recipe?.recipeId)
-                          .join(", ")}
+                        {order["Order Items"] &&
+                          order["Order Items"]
+                            .map((item) => item.Recipe?.recipeId)
+                            .join(", ")}
                       </td>
                       <td className="px-5 py-5 text-center text-sm">
-                        {order["Order Items"]
-                          .map((item) => item.Recipe?.title)
-                          .join(", ")}
+                        {order["Order Items"] &&
+                          order["Order Items"]
+                            .map((item) => item.Recipe?.title)
+                            .join(", ")}
                       </td>
                       <td className="px-5 py-5 text-center text-sm">
-                        {order["Order Items"]
-                          .map((item) => item.Recipe?.size)
-                          .join(", ")}
+                        {order["Order Items"] &&
+                          order["Order Items"]
+                            .map((item) => item.Recipe?.size)
+                            .join(", ")}
                       </td>
                       <td className="px-5 py-5 text-center text-sm">
                         {order.status}
@@ -118,7 +211,7 @@ const OrderDetails = () => {
                 ) : (
                   <tr>
                     <td colSpan="6" className="px-5 py-5 text-center text-sm">
-                      Loading.......
+                      No orders found.
                     </td>
                   </tr>
                 )}

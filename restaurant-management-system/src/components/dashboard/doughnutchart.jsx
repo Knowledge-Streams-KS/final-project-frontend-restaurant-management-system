@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { fetchOrders } from "./fetchOrders";
+import { ClipLoader } from "react-spinners";
 
 const OrderItemsDoughnutChart = () => {
   const [orderData, setOrderData] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const getOrderData = async () => {
       try {
@@ -12,6 +13,8 @@ const OrderItemsDoughnutChart = () => {
         setOrderData(orders);
       } catch (error) {
         console.error("Error fetching order data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -31,16 +34,10 @@ const OrderItemsDoughnutChart = () => {
     });
     return acc;
   }, {});
-
-  // Convert aggregateData to an array and sort by quantity in descending order
   const sortedItems = Object.values(aggregateData).sort(
     (a, b) => b.quantity - a.quantity,
   );
-
-  // Get top 3 items
   const top3Items = sortedItems.slice(0, 3);
-
-  // Prepare data for Doughnut chart
   const chartData = {
     labels: top3Items.map((item) => item.title),
     datasets: [
@@ -55,23 +52,35 @@ const OrderItemsDoughnutChart = () => {
       },
     ],
   };
-
-  // Chart options
   const chartOptions = {
     plugins: {
       title: {
         display: true,
-        text: "Top 3 Most Sold Items",
+
         font: {
           size: 20,
         },
       },
     },
+    maintainAspectRatio: false,
   };
 
   return (
-    <div className="dataCard">
-      <Doughnut data={chartData} options={chartOptions} />
+    <div className="container mx-auto px-4 sm:px-8">
+      <h2 className="mb-2 text-2xl font-semibold leading-tight">
+        Top 3 Most Sold Items
+      </h2>
+      <div className="rounded-lg">
+        <div className="flex items-center justify-center">
+          {loading ? (
+            <ClipLoader className="m-10" color={"#FF0000"} />
+          ) : (
+            <div className="h-60 w-full">
+              <Doughnut data={chartData} options={chartOptions} />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

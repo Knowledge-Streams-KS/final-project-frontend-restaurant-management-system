@@ -1,11 +1,37 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import axiosInstance from "../axios/axios.js";
 import toast, { Toaster } from "react-hot-toast";
-
+import { FadeLoader } from "react-spinners";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const fetchUser = async () => {
+        try {
+          const response = await axiosInstance.get("/user", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const { userInfo } = response.data;
+          setUser(userInfo);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+          localStorage.removeItem("token");
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const signup = async (firstName, lastName, email, password, role) => {
     try {
@@ -55,8 +81,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ signup, signin, logout, user }}>
-      {children}
-      <Toaster />
+      {loading ? (
+        <div className="flex h-screen items-center justify-center">
+          <FadeLoader color="#123abc" size={60} />
+        </div>
+      ) : (
+        <>
+          {children}
+          <Toaster />
+        </>
+      )}
     </AuthContext.Provider>
   );
 };

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axios/axios";
-
+import { BeatLoader } from "react-spinners";
 const AllStock = () => {
   const [stock, setStock] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const fetchStock = async () => {
     try {
@@ -15,6 +16,8 @@ const AllStock = () => {
       setStock(response.data.allInventory);
     } catch (error) {
       console.error("Error fetching stock:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,19 +58,35 @@ const AllStock = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredstock.map((stock) => (
-                  <tr className="border-b border-gray-200" key={stock.id}>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {stock.id}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {stock.ingredientCode}
-                    </td>
-                    <td className="px-5 py-5 text-center text-sm">
-                      {stock.totalQuantity}
+                {loading ? (
+                  <tr>
+                    <td colSpan="3" className="px-5 py-5">
+                      <div className="flex h-full items-center justify-center">
+                        <BeatLoader color="#111827" />
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : filteredstock.length > 0 ? (
+                  filteredstock.map((stock) => (
+                    <tr className="border-b border-gray-200" key={stock.id}>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {stock.id}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {stock.ingredientCode}
+                      </td>
+                      <td className="px-5 py-5 text-center text-sm">
+                        {stock.totalQuantity}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-5 py-5 text-center text-sm">
+                      No stock found.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

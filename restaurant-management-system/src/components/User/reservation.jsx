@@ -5,12 +5,15 @@ import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../axios/axios";
+import { io } from "socket.io-client";
 
 const ReservationCustomer = ({ toggleOTPForm }) => {
   const [timeSlots, setTimeSlots] = useState([]);
   const [filteredTimeSlots, setFilteredTimeSlots] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+
+  const socket = io("http://localhost:3000"); // Adjust the URL to your backend
 
   useEffect(() => {
     const fetchTimeSlots = async () => {
@@ -25,6 +28,32 @@ const ReservationCustomer = ({ toggleOTPForm }) => {
 
     fetchTimeSlots();
   }, []);
+
+  useEffect(() => {
+    socket.on("reservationCreated", (newReservation) => {
+      // Handle real-time updates for new reservations
+
+      // Update your state or UI as needed
+    });
+
+    socket.on("reservationUpdated", (updatedReservation) => {
+      // Handle real-time updates for reservation updates
+
+      // Update your state or UI as needed
+    });
+
+    socket.on("reservationDeleted", ({ id }) => {
+      // Handle real-time updates for reservation deletions
+  
+      // Update your state or UI as needed
+    });
+
+    return () => {
+      socket.off("reservationCreated");
+      socket.off("reservationUpdated");
+      socket.off("reservationDeleted");
+    };
+  }, [socket]);
 
   const initialValues = {
     fName: "",
@@ -97,11 +126,8 @@ const ReservationCustomer = ({ toggleOTPForm }) => {
 
   return (
     <Fragment>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-8 text-center text-4xl font-bold text-yellow-500">
-          Add Reservation
-        </h1>
-        <div className="mx-auto mt-8 max-w-md px-6 py-8 text-center">
+      <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-md text-center">
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -205,8 +231,8 @@ const ReservationCustomer = ({ toggleOTPForm }) => {
                 <button
                   className={`w-full rounded-lg py-3 font-semibold text-white transition-colors ${
                     loading
-                      ? "cursor-not-allowed bg-gray-400"
-                      : "bg-gray-500 hover:bg-gray-600"
+                      ? "cursor-not-allowed bg-yellow-400"
+                      : "bg-yellow-500 hover:bg-yellow-600"
                   }`}
                   type="submit"
                   disabled={loading}

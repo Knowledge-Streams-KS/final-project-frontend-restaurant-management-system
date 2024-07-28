@@ -5,15 +5,22 @@ import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import axiosInstance from "../../axios/axios";
+import { BeatLoader } from "react-spinners";
 
 const AddInventory = ({ fetchInventory }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
   const [ingredientCodes, setIngredientCodes] = useState([]);
 
   useEffect(() => {
     const fetchIngredientCodes = async () => {
       try {
-        const response = await axiosInstance.get("/ingredients/code");
+        const token = localStorage.getItem("token");
+        const response = await axiosInstance.get("/ingredients/code", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setIngredientCodes(response.data.ingredients || []);
       } catch (error) {
         console.error("Error fetching ingredient codes:", error);
@@ -44,6 +51,7 @@ const AddInventory = ({ fetchInventory }) => {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const formattedValues = {
@@ -64,6 +72,8 @@ const AddInventory = ({ fetchInventory }) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add ingredient.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,10 +147,19 @@ const AddInventory = ({ fetchInventory }) => {
                   </div>
                 </div>
                 <button
-                  className="px-3font-semibold mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
+                  className={`w-1/4 rounded-lg py-3 font-semibold text-white transition-colors ${
+                    loading
+                      ? "cursor-not-allowed bg-gray-400"
+                      : "bg-gray-500 hover:bg-gray-600"
+                  }`}
                   type="submit"
+                  disabled={loading}
                 >
-                  Add Inventory
+                  {loading ? (
+                    <BeatLoader size={10} color="#ffffff" />
+                  ) : (
+                    "Add Inventory"
+                  )}
                 </button>
               </Form>
             )}

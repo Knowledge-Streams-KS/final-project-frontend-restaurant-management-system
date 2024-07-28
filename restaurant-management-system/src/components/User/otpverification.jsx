@@ -57,7 +57,7 @@ const OTPForm = ({ email, onSubmit }) => {
         response.data.message || "Reservation confirmed successfully.";
       toast.success(successMessage);
       setOTPInputs(["", "", "", "", ""]);
-      onSubmit(); // Notify parent component about successful OTP verification
+      onSubmit();
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Failed to confirm Reservation";
@@ -83,7 +83,7 @@ const OTPForm = ({ email, onSubmit }) => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-24 md:px-6">
+    <div className="mx-auto w-full max-w-6xl md:px-6">
       <div className="flex justify-center">
         <div className="mx-auto max-w-md rounded-xl bg-white px-4 py-10 text-center shadow sm:px-8">
           <header className="mb-8">

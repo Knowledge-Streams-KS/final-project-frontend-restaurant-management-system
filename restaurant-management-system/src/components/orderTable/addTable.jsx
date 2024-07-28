@@ -1,10 +1,11 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import axiosInstance from "../../axios/axios";
-
+import { BeatLoader } from "react-spinners";
 const AddOrderTable = ({ fetchOrderTables }) => {
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
   const initialValues = {
     tableNo: "",
@@ -17,6 +18,7 @@ const AddOrderTable = ({ fetchOrderTables }) => {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.post("/ordertable", values, {
         headers: {
@@ -32,6 +34,8 @@ const AddOrderTable = ({ fetchOrderTables }) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add Table.";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,10 +96,19 @@ const AddOrderTable = ({ fetchOrderTables }) => {
                 </div>
               </div>
               <button
+                className={`w-1/4 rounded-lg py-3 font-semibold text-white transition-colors ${
+                  loading
+                    ? "cursor-not-allowed bg-gray-400"
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
                 type="submit"
-                className="mr-4 mt-4 w-full rounded-lg bg-gray-500 px-4 py-3 text-white transition-colors hover:bg-gray-600 md:mt-0 md:w-auto"
+                disabled={loading}
               >
-                Add Order Table
+                {loading ? (
+                  <BeatLoader size={10} color="#ffffff" />
+                ) : (
+                  "Add Order Table"
+                )}
               </button>
             </Form>
           </Formik>
