@@ -1,5 +1,5 @@
 import React from "react";
-import AdminSidebar from "./admin";
+import AdminSidebar from "./Admin";
 import WaiterSidebar from "./waiter";
 import ChefSidebar from "./chef";
 
